@@ -1,6 +1,8 @@
 import java.util.Random;
 import java.util.Scanner;
 
+// These lines import two utility classes: Random for generating random numbers and Scanner for reading user input.
+
 public class Game {
     Card[] deck;
     int index;
@@ -10,40 +12,51 @@ public class Game {
     // 0 is initial, 1 middle, 2 final bet
     Player player;
     Player dealer;
-    Scanner scanner;
+    Scanner scanner; 
+    // Here, the class Game is being defined. 
+    //This section declares class-level variables, such as the deck of cards, a random number generator, and instances of players.
 
     Game(int seed, Scanner scanner) {
-        deck = new Card[52];
-        Rank[] ranks = Rank.values();
-        Suit[] suits = Suit.values();
-        int i = 0;
+        deck = new Card[52]; // deck that holds 52 cards 
+        Rank[] ranks = Rank.values(); // Array ranks that fetches all possible values (ace two , three kings) 
+        Suit[] suits = Suit.values(); // array suits that fetches (clubs, diamonds hearts)
+        int i = 0; // used to keep track of the index for a for loop 
         for (Rank rank : ranks) {
-            for (Suit suit : suits) {
-                deck[i] = new Card(suit, rank);
-                i++;
+            for (Suit suit : suits) { 
+                // This is a nested for loop. 
+                //The outer loop iterates over each rank in the ranks array, 
+                //and the inner loop iterates over each suit in the suits array.
+                deck[i] = new Card(suit, rank);  
+                // inside the inner loop there is a new card that holds the current suit and rank and store in
+                // the deck array that has the index for the loop 
+                i++; // after storing the card in the deck the index increases one 
             }
-        }
+        } .. 
 
-        rng = new Random(seed);
-        player = new Player();
-        dealer = new Player();
-        this.scanner = scanner;
+        rng = new Random(seed); // new random number 
+        player = new Player(); // new player 
+        dealer = new Player(); // dealer also treated similarly like a new player 
+        this.scanner = scanner; // user input 
     }
 
     void bet(String name, Player player, int bet) throws LoseException {
-        if (bet > player.holdings) {
+// holds name of name , the player the amount 
+    
+        if (bet > player.holdings) { // restricition of bet 
             throw new LoseException(name, player);
         }
         System.out.println(name + " bets " + bet);
         player.holdings -= bet;
         pot += bet;
-    }
+    }  
+    //  It checks if the bet is valid, updates the player's holdings, and adds the bet to the central pot.
+    //If the bet is not valid (i.e., the player tries to bet more than they have), it throws an exception.
 
     void reward(String name, Player player) {
         System.out.println(name + " wins " + pot);
         player.holdings += pot;
         pot = 0;
-    }
+    } //reward function 
 
     void shuffle() {
         for (int i = 0; i < deck.length; i++) {
@@ -54,21 +67,21 @@ public class Game {
             deck[index] = temp;
         }
         index = 0;
-    }
+    } // shufle function 
 
     void deal(Player player) {
         for (int i = 0; i < 5; i++) {
             player.hand[i] = deck[index];
             index++;
         }
-    }
+    } // player function 
 
     void showHand(String name, Player player) {
         System.out.println(name);
         for (int i = 0; i < 5; i++) {
             System.out.println(i + ": " + player.hand[i]);
         }
-    }
+    } // display the current hand function 
 
     void swap(String name, Player player) {
         showHand(name, player);
@@ -82,17 +95,17 @@ public class Game {
             player.hand[handIndex] = deck[index];
             index++;
         }
-    }
+    } 
 
     void showState() {
         System.out.println("Player:" + player.holdings);
         System.out.println("Dealer:" + dealer.holdings);
-    }
+    } // show current holdings 
 
     int chooseInitial() {
         System.out.println("Bet(0) or Fold(1)?");
         return scanner.nextInt();
-    }
+    } // initial choice for player 
 
     int choosePlayerFinal() {
         System.out.println("Bet(0), Fold(1), Call(2), or All in(3)?");
