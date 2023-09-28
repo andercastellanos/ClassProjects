@@ -1,8 +1,8 @@
 import java.util.Arrays;
 
-public class Player {
-    Card[] hand;
-    int holdings;
+public class Player { // Declare a class named "Player"
+    Card[] hand; // Declare a Java array named "hand" of type Card.
+    int holdings; // Declare an integer value named "holdings".
 
     Player() {
         hand = new Card[5];
