@@ -4,7 +4,7 @@ public class Player { // Declare a class named "Player"
     Card[] hand; // Declare a Java array named "hand" of type Card.
     int holdings; // Declare an integer value named "holdings".
 
-    Player() {
+    Player() { // Test
         hand = new Card[5];
         holdings = 500;
     }
