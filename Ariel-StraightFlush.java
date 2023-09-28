@@ -1,3 +1,5 @@
+// Ariel
+
 public class StraightFlush extends HandCategory {
     Rank highest;
     Suit suit;

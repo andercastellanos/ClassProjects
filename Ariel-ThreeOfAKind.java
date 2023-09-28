@@ -1,3 +1,5 @@
+// Ariel
+
 public class ThreeOfAKind extends HandCategory {
     Rank highest;
 

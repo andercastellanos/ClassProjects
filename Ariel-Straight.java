@@ -1,3 +1,5 @@
+// Ariel
+
 public class Straight extends HandCategory {
     Rank highest;
 
