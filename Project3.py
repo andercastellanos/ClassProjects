@@ -1,152 +1,174 @@
 import random
 
-# Initialize statistics as a dictionary with player names as keys
-# and their corresponding statistics as values
-player_statistics = {}
+WEAPONS = ["Rock", "Paper", "Scissors", "Saw"]
+players = ["Player 1", "Player 2", "Computer"]
+player_stats = {
+    "Player 1": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0},
+    "Player 2": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0},
+    "Computer": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0}
+}
 
-def initialize_players():
-    global player_statistics
-    player1_name = input("What is the name of the first human player? ")
-    player2_name = input("What is the name of the second human player? ")
+def get_player_name(player_number):
+    while True:
+        player_name = input(f"What is the name of Player {player_number}? ").strip()
+        if 5 <= len(player_name) <= 20:
+            return player_name
+        else:
+            print("Player name must be between 5 and 20 characters.")
 
-    # Ensure player names are unique
-    while player2_name == player1_name:
-        print("Second player name must be different from the first player.")
-        player2_name = input("What is the name of the second human player? ")
+def get_player_choice(player_name):
+    while True:
+        player_choice = input(f"{player_name}, select your weapon (Rock, Paper, Scissors, or Saw): ").strip().title()
+        if player_choice in WEAPONS:
+            return player_choice
+        else:
+            print("Invalid weapon. Choose from Rock, Paper, Scissors, or Saw.")
 
-    player_statistics[player1_name] = {'rounds_won': 0, 'rounds_lost': 0, 'rounds_tied': 0, 'games_won': 0, 'games_lost': 0}
-    player_statistics[player2_name] = {'rounds_won': 0, 'rounds_lost': 0, 'rounds_tied': 0, 'games_won': 0, 'games_lost': 0}
-    player_statistics['Computer'] = {'rounds_won': 0, 'rounds_lost': 0, 'rounds_tied': 0, 'games_won': 0, 'games_lost': 0}
+def play_round():
+    for player_name in players[:2]:
+        player_choice = get_player_choice(player_name)
+        computer_choice = random.choice(WEAPONS)
 
-def display_menu():
-    print("\nMenu:")
-    print("1. Play game")
-    print("2. Show game rules")
-    print("3. Show statistics")
-    print("4. Exit")
+        print(f"{player_name} chose {player_choice}.")
+        print(f"Computer chose {computer_choice}.")
 
-def show_rules():
-    print("\nRules:")
-    print("Rock breaks scissors and Saw, but loses against paper.")
-    print("Scissors cut paper, but lose against rock and Saw.")
-    print("Paper covers rock, but loses against scissors and Saw.")
-    print("Saw cuts through scissors and paper, but loses against rock.")
-    print("If both players make the same selection, it's a tie.")
+        round_winner = determine_round_winner(player_choice, computer_choice)
 
-def display_statistics():
-    print("\n[Statistics]")
-    for player_name, stats in player_statistics.items():
-        print(f"{player_name}: Rounds Won={stats['rounds_won']}, Rounds Lost={stats['rounds_lost']}, Rounds Tied={stats['rounds_tied']}, Games Won={stats['games_won']}, Games Lost={stats['games_lost']}")
+        if round_winner == player_name:
+            print(f"{player_name} wins this round!")
+            player_stats[player_name]["rounds_won"] += 1
+        elif round_winner == "Computer":
+            print("Computer wins this round!")
+            player_stats["Computer"]["rounds_won"] += 1
+        else:
+            print("It's a tie!")
+            player_stats[player_name]["rounds_tied"] += 1
+            player_stats["Computer"]["rounds_tied"] += 1
 
-def play_round(player1, player2):
-    choices = ["rock", "paper", "scissors", "saw"]
-    player1_choice = input(f"{player1}, choose your weapon (rock, paper, scissors, saw): ").lower()
-    while player1_choice not in choices:
-        print("Invalid choice. Choose from rock, paper, scissors, saw.")
-        player1_choice = input(f"{player1}, choose your weapon (rock, paper, scissors, saw): ").lower()
+def determine_round_winner(player_choice, computer_choice):
+    if player_choice == computer_choice:
+        return "Tie"
+    if (
+        (player_choice == "Rock" and (computer_choice == "Scissors" or computer_choice == "Saw")) or
+        (player_choice == "Scissors" and computer_choice == "Paper") or
+        (player_choice == "Paper" and (computer_choice == "Rock")) or
+        (player_choice == "Saw" and (computer_choice == "Scissors" or computer_choice == "Paper"))
+    ):
+        return player_choice
+    return "Computer"
 
-    computer_choice = random.choice(choices)
-
-    print(f"{player1} chose {player1_choice}")
-    print(f"Computer chose {computer_choice}")
-
-    # Determine the winner of the round for player1
-    if (player1_choice == "rock" and computer_choice in ["scissors", "saw"]) or \
-       (player1_choice == "scissors" and computer_choice == "paper") or \
-       (player1_choice == "paper" and computer_choice == "rock") or \
-       (player1_choice == "saw" and computer_choice in ["scissors", "paper"]):
-        print(f"{player1} wins this round!")
-        player_statistics[player1]['rounds_won'] += 1
-        player_statistics['Computer']['rounds_lost'] += 1
-    elif player1_choice == computer_choice:
-        print("It's a tie!")
-        player_statistics[player1]['rounds_tied'] += 1
-        player_statistics['Computer']['rounds_tied'] += 1
+def determine_game_winner(player1_rounds_won, player2_rounds_won):
+    if player1_rounds_won > player2_rounds_won:
+        return "Player 1"
+    elif player2_rounds_won > player1_rounds_won:
+        return "Player 2"
     else:
-        print("Computer wins this round!")
-        player_statistics['Computer']['rounds_won'] += 1
-        player_statistics[player1]['rounds_lost'] += 1
+        return "Tie"
 
-    # Determine the winner of the round for player2
-    player2_choice = input(f"{player2}, choose your weapon (rock, paper, scissors, saw): ").lower()
-    while player2_choice not in choices:
-        print("Invalid choice. Choose from rock, paper, scissors, saw.")
-        player2_choice = input(f"{player2}, choose your weapon (rock, paper, scissors, saw): ").lower()
+def determine_overall_winner():
+    player1_wins = player_stats["Player 1"]["games_won"]
+    player2_wins = player_stats["Player 2"]["games_won"]
+    computer_wins = player_stats["Computer"]["games_won"]
 
-    print(f"{player2} chose {player2_choice}")
+    player1_losses = player_stats["Player 1"]["games_lost"]
+    player2_losses = player_stats["Player 2"]["games_lost"]
+    computer_losses = player_stats["Computer"]["games_lost"]
 
-    # Determine the winner of the round for player2
-    if (player2_choice == "rock" and computer_choice in ["scissors", "saw"]) or \
-       (player2_choice == "scissors" and computer_choice == "paper") or \
-       (player2_choice == "paper" and computer_choice == "rock") or \
-       (player2_choice == "saw" and computer_choice in ["scissors", "paper"]):
-        print(f"{player2} wins this round!")
-        player_statistics[player2]['rounds_won'] += 1
-        player_statistics['Computer']['rounds_lost'] += 1
-    elif player2_choice == computer_choice:
-        print("It's a tie!")
-        player_statistics[player2]['rounds_tied'] += 1
-        player_statistics['Computer']['rounds_tied'] += 1
+    max_wins = max(player1_wins, player2_wins, computer_wins)
+    min_losses = min(player1_losses, player2_losses, computer_losses)
+
+    if player1_wins == player2_wins and player1_losses == player2_losses:
+        print("Overall Human Winner: Tie")
     else:
-        print("Computer wins this round!")
-        player_statistics['Computer']['rounds_won'] += 1
-        player_statistics[player2]['rounds_lost'] += 1
+        if player1_wins > player2_wins:
+            print(f"Overall Human Winner: {player_stats['Player 1']['name']}")
+        else:
+            print(f"Overall Human Winner: {player_stats['Player 2']['name']}")
 
-def play_game():
-    global player_statistics
+def play():
+    round_number = 0
+    player1_rounds_won = 0
+    player2_rounds_won = 0
 
-    # Get the player names dynamically from the dictionary
-    player_names = list(player_statistics.keys())
-    player1 = player_names[0]
-    player2 = player_names[1]
+    while round_number < 3:
+        print("Round", round_number + 1)
+        play_round()
 
-    # Reset round statistics
-    player_statistics[player1]['rounds_won'] = player_statistics[player1]['rounds_lost'] = player_statistics[player1]['rounds_tied'] = 0
-    player_statistics[player2]['rounds_won'] = player_statistics[player2]['rounds_lost'] = player_statistics[player2]['rounds_tied'] = 0
-    player_statistics['Computer']['rounds_won'] = player_statistics['Computer']['rounds_lost'] = player_statistics['Computer']['rounds_tied'] = 0
+        round_number += 1
 
-    # Play rounds until a player wins 3 rounds or loses 3 rounds
-    while player_statistics[player1]['rounds_won'] < 3 and player_statistics[player2]['rounds_won'] < 3 \
-            and player_statistics[player1]['rounds_lost'] < 3 and player_statistics[player2]['rounds_lost'] < 3:
-        play_round(player1, player2)
+    player1_rounds_won = player_stats["Player 1"]["rounds_won"]
+    player2_rounds_won = player_stats["Player 2"]["rounds_won"]
 
-    # Determine the winner of the game
-    if player_statistics[player1]['rounds_won'] >= 3:
-        print(f"\n{player1} wins the game!")
-        player_statistics[player1]['games_won'] += 1
-        player_statistics[player2]['games_lost'] += 1
-    elif player_statistics[player2]['rounds_won'] >= 3:
-        print(f"\n{player2} wins the game!")
-        player_statistics[player2]['games_won'] += 1
-        player_statistics[player1]['games_lost'] += 1
+    game_winner = determine_game_winner(player1_rounds_won, player2_rounds_won)
 
+    if game_winner == "Player 1":
+        print("Player 1 wins the game!")
+        player_stats["Player 1"]["games_won"] += 1
+        player_stats["Computer"]["games_lost"] += 1
+    elif game_winner == "Player 2":
+        print("Player 2 wins the game!")
+        player_stats["Player 2"]["games_won"] += 1
+        player_stats["Computer"]["games_lost"] += 1
     else:
-        print("\nGame tied!")
-        
-        player_statistics['Computer']['games_won'] += 1
-        player_statistics[player1]['games_lost'] += 1
-        player_statistics[player2]['games_lost'] += 1
+        print("It's a tie game!")
 
+    play_again = input("Do you want to play another game? (yes/no): ").strip().lower()
+    if play_again == "yes":
+        play()
 
+def menu():
+    player_stats["Player 1"]["name"] = get_player_name(1)
+    player_stats["Player 2"]["name"] = get_player_name(2)
 
-def main():
-    initialize_players()
+    while player_stats["Player 1"]["name"] == player_stats["Player 2"]["name"]:
+        print("Player 2's name must be different from Player 1's name")
+        player_stats["Player 2"]["name"] = get_player_name(2)
 
     while True:
-        display_menu()
-        choice = input("Select an option: ")
+        print("Menu:")
+        print("1. Play game")
+        print("2. Show game rules")
+        print("3. Show statistics")
+        print("4. Exit")
+        choice = input("Enter your choice: ")
 
-        if choice == "1":
-            play_game()
-        elif choice == "2":
-            show_rules()
-        elif choice == "3":
-            display_statistics()
-        elif choice == "4":
-            print("Goodbye!")
+        if choice == '1':
+            play()
+        elif choice == '2':
+            rules()
+        elif choice == '3':
+            stats()
+        elif choice == '4':
+            print("Goodbye")
             break
         else:
             print("Invalid choice. Please select a valid option.")
 
+def stats():
+    print("Statistics:")
+    for player_name in player_stats.keys():
+        player_info = player_stats[player_name]
+        rounds_won = player_info["rounds_won"]
+        rounds_lost = player_info["rounds_lost"]
+        rounds_tied = player_info["rounds_tied"]
+        games_won = player_info["games_won"]
+        games_lost = player_info["games_lost"]
+        player_name = player_info.get("name", player_name)  # Update player_name with name attribute
+
+        print(f"{player_name} - Rounds won: {rounds_won}, Rounds lost: {rounds_lost}, Rounds tied: {rounds_tied}, Games won: {games_won}, Games lost: {games_lost}")
+
+    determine_overall_winner()
+
+    input("Press Enter to return to the menu...")
+
+def rules():
+    print("Game Rules:")
+    print("a. Rock breaks scissors and Saw, so rock wins over scissors and saw. Rock loses against paper.")
+    print("b. Scissors cut paper, so scissors win over paper. Scissors lose against rock and Saw.")
+    print("c. Paper covers rock, so paper wins over rock. Paper loses against scissors and Saw.")
+    print("d. Saw cuts through scissors and paper, so Saw wins over scissors and paper. Saw loses against rock.")
+    print("e. If player and computer make the same selection, there is a tie.")
+    input("Press Enter to return to the menu...")
+
 if __name__ == "__main__":
-    main()
+    menu()
