@@ -4,7 +4,7 @@ import random
 def get_player_name(player_number):
     while True:
         name = input(f"Enter Player {player_number}'s name: ")
-        if len(name) >= 5:
+        if 5 <= len(name) <= 20:
             return name
         else:
             print("Name should be 5-20 characters long.")
