@@ -1,6 +1,5 @@
 import random
 
-# Investigate player name validation
 def get_player_name(player_number):
     while True:
         name = input(f"Enter Player {player_number}'s name: ")
