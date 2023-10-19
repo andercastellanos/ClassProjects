@@ -1,3 +1,4 @@
+from os import system, name
 import random
 
 def get_player_name(player_number):
@@ -55,6 +56,15 @@ def display_statistics(player1_name, player2_name, computer_name, player1_stats,
     print(f"{computer_name} - Wins: {computer_stats['wins']}, Losses: {computer_stats['losses']}, Ties: {computer_stats['ties']}")
     input("Press Enter to return to the main menu.")
 
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
+
 def main():
     player1_name = None
     player2_name = None
@@ -65,6 +75,7 @@ def main():
     computer_stats = {"wins": 0, "losses": 0, "ties": 0}
 
     while True:
+        clear()
         print("Main Menu:")
         print("1. Play Game")
         print("2. Show Game Rules")
@@ -74,6 +85,7 @@ def main():
         choice = input("Enter your choice: ")
 
         if choice == "1":
+            clear()
             if player1_name is None:
                 player1_name = get_player_name(1)
             if player2_name is None:
@@ -81,6 +93,9 @@ def main():
             
             if player1_name == player2_name:
                 print("Player names cannot match. Please choose a different name.")
+                if input("Press the Enter key to continue.") is "":
+                    clear()
+
             else:
                 for round_number in range(1, 4):
                     print(f"Round {round_number}")
