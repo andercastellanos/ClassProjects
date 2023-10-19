@@ -76,11 +76,11 @@ def main():
 
     while True:
         clear()
-        print("Main Menu:")
+        print("--------------------\nMAIN MENU\n--------------------\n")
         print("1. Play Game")
         print("2. Show Game Rules")
         print("3. Show Statistics")
-        print("4. Exit")
+        print("4. Exit\n")
 
         choice = input("Enter your choice: ")
 
@@ -137,7 +137,7 @@ def main():
                 else:
                     computer_stats["ties"] += 1
 
-            print("GAME OVER!")
+            print("GAME OVER!\n")
             input("Press ENTER to return to the main menu.")
           
         elif choice == "2":
@@ -147,7 +147,7 @@ def main():
             clear()
             display_statistics(player1_name, player2_name, computer_name, player1_stats, player2_stats, computer_stats)
         elif choice == "4":
-            print("Goodbye!")
+            print("\nGoodbye!\n")
             break
 
 if __name__ == "__main__":
