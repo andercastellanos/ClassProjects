@@ -42,19 +42,19 @@ def determine_winner(player_choice, computer_choice):
         return "Computer wins!"
 
 def display_game_rules():
-    print("Game Rules:")
+    print("--------------------\nGAME RULES\n--------------------\n")
     print("Rock beats Scissors")
     print("Scissors beats Paper")
     print("Paper beats Rock")
     print("Saw beats Rock, Paper, and Scissors")
-    input("Press Enter to return to the main menu.")
+    input("\nPress ENTER to return to the main menu.")
 
 def display_statistics(player1_name, player2_name, computer_name, player1_stats, player2_stats, computer_stats):
-    print("Statistics:")
+    print("--------------------\nSTATISTICS\n--------------------\n")
     print(f"{player1_name} - Wins: {player1_stats['wins']}, Losses: {player1_stats['losses']}, Ties: {player1_stats['ties']}")
     print(f"{player2_name} - Wins: {player2_stats['wins']}, Losses: {player2_stats['losses']}, Ties: {player2_stats['ties']}")
     print(f"{computer_name} - Wins: {computer_stats['wins']}, Losses: {computer_stats['losses']}, Ties: {computer_stats['ties']}")
-    input("Press Enter to return to the main menu.")
+    input("\nPress ENTER to return to the main menu.")
 
 def clear():
     # for windows
@@ -85,31 +85,36 @@ def main():
         choice = input("Enter your choice: ")
 
         if choice == "1":
-            clear()
-            
             while player1_name == player2_name:
+                clear()
+
+                if (player1_name == player2_name) & (player1_name != "") & (player1_name != None):
+                    print("Player names cannot match. Please choose a different name.")
+                
                 player1_name = get_player_name(1)
                 player2_name = get_player_name(2)
-                if player1_name == player2_name:
-                    print("Player names cannot match. Please choose a different name.")
 
             clear()
             
             for round_number in range(1, 4):
-                print(f"ROUND {round_number}\n")
+                print(f"--------------------\nROUND {round_number}\n--------------------\n")
                 player1_choice = get_player_choice(player1_name)
+                print("")
                 player2_choice = get_player_choice(player2_name)
+                print("")
                 computer_choice = get_computer_choice()
 
+                print(f"--------------------\nROUND {round_number} RESULTS\n--------------------\n")
                 print(f"{player1_name} chose: {player1_choice}")
                 print(f"{player2_name} chose: {player2_choice}")
                 print(f"{computer_name} chose: {computer_choice}")
 
                 result1 = determine_winner(player1_choice, computer_choice)
                 result2 = determine_winner(player2_choice, computer_choice)
-
+                print("")
                 print(f"{player1_name}: {result1}")
                 print(f"{player2_name}: {result2}")
+                print("")
 
                 if result1 == "Player wins!":
                     player1_stats["wins"] += 1
@@ -132,11 +137,14 @@ def main():
                 else:
                     computer_stats["ties"] += 1
 
-            print("Game over!")
+            print("GAME OVER!")
+            input("Press ENTER to return to the main menu.")
           
         elif choice == "2":
+            clear()
             display_game_rules()
         elif choice == "3":
+            clear()
             display_statistics(player1_name, player2_name, computer_name, player1_stats, player2_stats, computer_stats)
         elif choice == "4":
             print("Goodbye!")
