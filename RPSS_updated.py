@@ -7,15 +7,15 @@ def get_player_name(player_number):
         if len(name) >= 5:
             return name
         else:
-            print("Name should be at least 5 characters long.")
+            print("Name should be 5-20 characters long.")
 
 def get_player_choice(player_name):
+    print(f"{player_name}, enter your choice:\n")
+    print("1. Rock")
+    print("2. Paper")
+    print("3. Scissors")
+    print("4. Saw\n")
     while True:
-        print(f"{player_name}, enter your choice:")
-        print("1. Rock")
-        print("2. Paper")
-        print("3. Scissors")
-        print("4. Saw")
         try:
             choice = int(input(f"Your choice: "))
             if 1 <= choice <= 4:
@@ -86,55 +86,53 @@ def main():
 
         if choice == "1":
             clear()
-            if player1_name is None:
-                player1_name = get_player_name(1)
-            if player2_name is None:
-                player2_name = get_player_name(2)
             
-            if player1_name == player2_name:
-                print("Player names cannot match. Please choose a different name.")
-                if input("Press the Enter key to continue.") is "":
-                    clear()
+            while player1_name == player2_name:
+                player1_name = get_player_name(1)
+                player2_name = get_player_name(2)
+                if player1_name == player2_name:
+                    print("Player names cannot match. Please choose a different name.")
 
-            else:
-                for round_number in range(1, 4):
-                    print(f"Round {round_number}")
-                    player1_choice = get_player_choice(player1_name)
-                    player2_choice = get_player_choice(player2_name)
-                    computer_choice = get_computer_choice()
+            clear()
+            
+            for round_number in range(1, 4):
+                print(f"ROUND {round_number}\n")
+                player1_choice = get_player_choice(player1_name)
+                player2_choice = get_player_choice(player2_name)
+                computer_choice = get_computer_choice()
 
-                    print(f"{player1_name} chose: {player1_choice}")
-                    print(f"{player2_name} chose: {player2_choice}")
-                    print(f"{computer_name} chose: {computer_choice}")
+                print(f"{player1_name} chose: {player1_choice}")
+                print(f"{player2_name} chose: {player2_choice}")
+                print(f"{computer_name} chose: {computer_choice}")
 
-                    result1 = determine_winner(player1_choice, computer_choice)
-                    result2 = determine_winner(player2_choice, computer_choice)
+                result1 = determine_winner(player1_choice, computer_choice)
+                result2 = determine_winner(player2_choice, computer_choice)
 
-                    print(f"{player1_name}: {result1}")
-                    print(f"{player2_name}: {result2}")
+                print(f"{player1_name}: {result1}")
+                print(f"{player2_name}: {result2}")
 
-                    if result1 == "Player wins!":
-                        player1_stats["wins"] += 1
-                    elif result1 == "Computer wins!":
-                        player1_stats["losses"] += 1
-                    else:
-                        player1_stats["ties"] += 1
+                if result1 == "Player wins!":
+                    player1_stats["wins"] += 1
+                elif result1 == "Computer wins!":
+                    player1_stats["losses"] += 1
+                else:
+                    player1_stats["ties"] += 1
 
-                    if result2 == "Player wins!":
-                        player2_stats["wins"] += 1
-                    elif result2 == "Computer wins!":
-                        player2_stats["losses"] += 1
-                    else:
-                        player2_stats["ties"] += 1
+                if result2 == "Player wins!":
+                    player2_stats["wins"] += 1
+                elif result2 == "Computer wins!":
+                    player2_stats["losses"] += 1
+                else:
+                    player2_stats["ties"] += 1
 
-                    if result1 == "Computer wins!":
-                        computer_stats["wins"] += 1
-                    elif result1 == "Player wins!":
-                        computer_stats["losses"] += 1
-                    else:
-                        computer_stats["ties"] += 1
+                if result1 == "Computer wins!":
+                    computer_stats["wins"] += 1
+                elif result1 == "Player wins!":
+                    computer_stats["losses"] += 1
+                else:
+                    computer_stats["ties"] += 1
 
-                print("Game over!")
+            print("Game over!")
           
         elif choice == "2":
             display_game_rules()
