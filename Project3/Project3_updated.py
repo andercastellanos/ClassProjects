@@ -159,6 +159,18 @@ def play(player1_name, player2_name, computer_name):
         else:
             player_stats["Computer"]["rounds_tied"] += 1
 
+        if round_number % 3 == 0:
+            for player_name in player_stats.keys():
+                rounds_won = player_stats[player_name]["rounds_won"]
+                if rounds_won >= 3:
+                    player_stats[player_name]["games_won"] += 1
+                    player_stats[player_name]["rounds_won"] = 0
+            for player_name in player_stats.keys():
+                rounds_lost = player_stats[player_name]["rounds_lost"]
+                if rounds_lost >= 3:
+                    player_stats[player_name]["games_lost"] += 1
+                    player_stats[player_name]["rounds_lost"] = 0
+
     print("GAME OVER!\n")
     input("Press ENTER to return to the main menu.")
 
