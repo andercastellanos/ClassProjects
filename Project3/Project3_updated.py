@@ -43,10 +43,12 @@ def determine_winner(player_choice, computer_choice):
 
 def display_game_rules():
     print("--------------------\nGAME RULES\n--------------------\n")
-    print("Rock beats Scissors")
-    print("Scissors beats Paper")
-    print("Paper beats Rock")
-    print("Saw beats Rock, Paper, and Scissors")
+    print("Winner of the round will be determined as follow:")
+    print("Rock breaks scissors and Saw therefore rock wins over scissors and saw. Rock loses against paper.")
+    print("Scissors cut paper therefore scissors win over paper. Scissors lose against rock and Saw.")
+    print("Paper covers rock therefore paper wins over rock. Paper loses against scissors and Saw")
+    print("Saw cuts through scissors and paper therefore saw wins over scissors and paper. Saw loses against rock.")
+    print("If player and computer make the same selection, there is a tie.")
     input("\nPress ENTER to return to the main menu.")
 
 def display_statistics(player1_name, player2_name, computer_name, player1_stats, player2_stats, computer_stats):
@@ -73,7 +75,16 @@ def main():
     player1_stats = {"wins": 0, "losses": 0, "ties": 0}
     player2_stats = {"wins": 0, "losses": 0, "ties": 0}
     computer_stats = {"wins": 0, "losses": 0, "ties": 0}
+    
+    while player1_name == player2_name:
+        clear()
 
+        if (player1_name == player2_name) & (player1_name != "") & (player1_name != None):
+            print("Player names cannot match. Please choose a different name.")
+                
+        player1_name = get_player_name(1)
+        player2_name = get_player_name(2)
+        
     while True:
         clear()
         print("--------------------\nMAIN MENU\n--------------------\n")
@@ -85,14 +96,7 @@ def main():
         choice = input("Enter your choice: ")
 
         if choice == "1":
-            while player1_name == player2_name:
-                clear()
-
-                if (player1_name == player2_name) & (player1_name != "") & (player1_name != None):
-                    print("Player names cannot match. Please choose a different name.")
-                
-                player1_name = get_player_name(1)
-                player2_name = get_player_name(2)
+            
 
             clear()
             
