@@ -1,3 +1,4 @@
+from os import system, name
 import random
 
 WEAPONS = ["Rock", "Paper", "Scissors", "Saw"]
@@ -84,6 +85,15 @@ def determine_overall_winner():
             print(f"Overall Human Winner: {player_stats['Player 1']['name']}")
         else:
             print(f"Overall Human Winner: {player_stats['Player 2']['name']}")
+
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 
 def play():
     round_number = 0
