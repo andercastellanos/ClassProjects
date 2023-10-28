@@ -20,8 +20,12 @@ def clear():
 
 
 def get_player_name(player_number):
+    playerString = ""
+    if player_number == 0: playerString = "first"
+    elif player_number == 1: playerString = "second"
+
     while True:
-        name = input(f"What is the name of Player {player_number}?: ")
+        name = input(f"What is the name of the {playerString} player?: ")
         if 5 <= len(name) <= 20:
             return name
         else:
@@ -60,12 +64,23 @@ def determine_round_winner(player_choice, computer_choice):
 
 
 def determine_game_winner(player1_rounds_won, player2_rounds_won, computer_rounds_won):
-    if player1_rounds_won > player2_rounds_won:
-        return "Player 1"
-    elif player2_rounds_won > player1_rounds_won:
-        return "Player 2"
+    if player1_rounds_won > player2_rounds_won >= computer_rounds_won:
+        player_stats["Player 1"]["games_won"] += 1
+        player_stats["Player 2"]["games_lost"] += 1
+        player_stats["Computer"]["games_lost"] += 1
+        return "Player 1 Wins!"
+    elif player2_rounds_won > player1_rounds_won >= computer_rounds_won:
+        player_stats["Player 1"]["games_lost"] += 1
+        player_stats["Player 2"]["games_won"] += 1
+        player_stats["Computer"]["games_lost"] += 1
+        return "Player 2 Wins!"
+    elif computer_rounds_won > player1_rounds_won >= player2_rounds_won:
+        player_stats["Player 1"]["games_lost"] += 1
+        player_stats["Player 2"]["games_lost"] += 1
+        player_stats["Computer"]["games_won"] += 1
+        return "Computer Wins!"
     else:
-        return "Tie"
+        return "It's a tie."
 
 
 def determine_overall_winner():
@@ -81,12 +96,12 @@ def determine_overall_winner():
     min_losses = min(player1_losses, player2_losses, computer_losses)
 
     if player1_wins == player2_wins and player1_losses == player2_losses:
-        print("Overall Human Winner: Tie")
+        print("\nOverall Human Winner: Tie")
     else:
         if player1_wins > player2_wins:
-            print(f"Overall Human Winner: {player_stats['Player 1']['name']}")
+            print(f"\nOverall Human Winner: {players[0]}")
         else:
-            print(f"Overall Human Winner: {player_stats['Player 2']['name']}")
+            print(f"\nOverall Human Winner: {players[1]}")
 
 
 def rules():
@@ -128,6 +143,10 @@ def stats(player1_name, player2_name, computer_name):
 
 
 def play(player1_name, player2_name, computer_name):
+    player1_rounds_won = 0
+    player2_rounds_won = 0
+    computer_rounds_won = 0
+
     for round_number in range(1, 4):
         print(f"--------------------\nROUND {round_number}\n--------------------\n")
         player1_choice = get_player_choice(player1_name)
@@ -150,41 +169,40 @@ def play(player1_name, player2_name, computer_name):
 
         if result1 == "Player wins!":
             player_stats["Player 1"]["rounds_won"] += 1
+            player_stats["Computer"]["rounds_lost"] += 1
+            player1_rounds_won += 1
         elif result1 == "Computer wins!":
             player_stats["Player 1"]["rounds_lost"] += 1
-        else:
+            player_stats["Computer"]["rounds_won"] += 1
+            computer_rounds_won += 1
+        elif result1 == "It's a tie!":
             player_stats["Player 1"]["rounds_tied"] += 1
+            player_stats["Computer"]["rounds_tied"] += 1
 
         if result2 == "Player wins!":
             player_stats["Player 2"]["rounds_won"] += 1
+            player_stats["Computer"]["rounds_lost"] += 1
+            player2_rounds_won += 1
         elif result2 == "Computer wins!":
             player_stats["Player 2"]["rounds_lost"] += 1
-        else:
-            player_stats["Player 2"]["rounds_tied"] += 1
-
-        if result1 == "Computer wins!":
             player_stats["Computer"]["rounds_won"] += 1
-        elif result1 == "Player wins!":
-            player_stats["Computer"]["rounds_lost"] += 1
-        else:
+            computer_rounds_won += 1
+        elif result2 == "It's a tie!":
+            player_stats["Player 2"]["rounds_tied"] += 1
             player_stats["Computer"]["rounds_tied"] += 1
 
-        if round_number % 3 == 0:
-            for player_name in player_stats.keys():
-                rounds_won = player_stats[player_name]["rounds_won"]
-                if rounds_won >= 3:
-                    player_stats[player_name]["games_won"] += 1
+        if result1 == result2 == "Player wins!":
+            player_stats["Computer"]["rounds_lost"] -= 1
+        elif result1 == result2 == "Computer wins!":
+            player_stats["Computer"]["rounds_won"] -= 1
+            computer_rounds_won -= 1
+        elif result1 == result2 == "It's a tie.":
+            player_stats["Computer"]["rounds_tied"] -= 1
 
-            for player_name in player_stats.keys():
-                rounds_lost = player_stats[player_name]["rounds_lost"]
-                if rounds_lost >= 3:
-                    player_stats[player_name]["games_lost"] += 1
-
-            for player_name in player_stats.keys():
-                rounds_tied = player_stats[player_name]["rounds_tied"]
-                if rounds_tied >= 3:
-                    player_stats[player_name]["games_tied"] += 1
-                  
+    print(f"--------------------\nGAME {round_number} RESULTS\n--------------------\n")
+    whoWon = determine_game_winner(player1_rounds_won, player2_rounds_won, computer_rounds_won)
+    print(whoWon)
+    print("")
 
     print("GAME OVER!\n")
     input("Press ENTER to return to the main menu.")
@@ -197,8 +215,8 @@ def menu():
         if (players[0] == players[1]) & (players[0] != "") & (players[0] != None):
             print("Player names cannot match. Please choose a different name.")
 
-        players[0] = get_player_name(1)
-        players[1] = get_player_name(2)
+        for x in range(2):
+            players[x] = get_player_name(x)
 
     while True:
         clear()
