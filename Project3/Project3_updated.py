@@ -116,11 +116,13 @@ def stats(player1_name, player2_name, computer_name):
         games_won = player_info["games_won"]
         games_lost = player_info["games_lost"]
         games_tied = player_info["games_tied"]
-        player_name = player_info.get("name", player_name)  # Update player_name with name attribute
+        player_name = player_info.get("name", player_name) # Update player_name with name attribute
 
         print(
             f"{players[index]} - Rounds won: {rounds_won}, Rounds lost: {rounds_lost}, Rounds tied: {rounds_tied}, Games won: {games_won}, Games lost: {games_lost}, Games tied: {games_tied}")
         index = index + 1
+    
+    determine_overall_winner()
 
     input("\nPress ENTER to return to the main menu.")
 
@@ -182,7 +184,7 @@ def play(player1_name, player2_name, computer_name):
                 rounds_tied = player_stats[player_name]["rounds_tied"]
                 if rounds_tied >= 3:
                     player_stats[player_name]["games_tied"] += 1
-                    player_stats[player_name]["rounds_tied"] = 0
+                  
 
     print("GAME OVER!\n")
     input("Press ENTER to return to the main menu.")
