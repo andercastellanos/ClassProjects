@@ -63,22 +63,32 @@ def determine_round_winner(player_choice, computer_choice):
         return "Player wins!"
 
 
-def determine_game_winner(player1_rounds_won, player2_rounds_won, computer_rounds_won, player1_rounds_lost, player2_rounds_lost, computer_rounds_lost):
-    rounds_won = [player1_rounds_won, player2_rounds_won, computer_rounds_won]
-
-    max_rounds_won = max(rounds_won)
+def determine_game_winner(player1_wins, player2_wins, computer_wins, player1_losses, player2_losses, computer_losses):
+    # Create lists for wins and losses
+    wins = [player1_wins, player2_wins, computer_wins]
+    losses = [player1_losses, player2_losses, computer_losses]
     
-    max_indices = [i for i, rounds in enumerate(rounds_won) if rounds == max_rounds_won]
-
-    if len(max_indices) == 1:
-        player_stats["Player 1"]["games_won"]
-    elif len(max_indices) > 1:
-        rounds_lost = [player1_rounds_lost, player2_rounds_lost, computer_rounds_lost]
-        min_rounds_lost = min(rounds_lost)
-        min_indices = [i for i, rounds in enumerate(rounds_lost) if rounds == min_rounds_lost]
-        
-    print(f"The maximum amount of wins is {max_rounds_won} and it belongs to {', '.join(map(lambda x: str(players[x]), max_indices))}")
-
+    # Find the maximum number of wins
+    max_wins = max(wins)
+    
+    # Find players with the maximum number of wins
+    max_winners = [i for i, win in enumerate(wins) if win == max_wins]
+    
+    # If only one player has the maximum wins, declare them the winner
+    if len(max_winners) == 1:
+        return f"Player {max_winners[0]} is the winner."
+    
+    # If there are multiple players with the same maximum wins, compare their losses
+    min_losses = min(losses[i] for i in max_winners)
+    
+    # Find the winners with the lowest losses
+    tie_winners = [player for player in max_winners if losses[player] == min_losses]
+    
+    if len(tie_winners) == 1:
+        return f"Player {tie_winners[0]} is the winner."
+    else:
+        return "It's a tie."
+    
 
 def determine_overall_winner():
     player1_wins = player_stats["Player 1"]["games_won"]
@@ -202,10 +212,10 @@ def play(player1_name, player2_name, computer_name):
             player_stats["Computer"]["rounds_tied"] -= 1
 
     print(f"--------------------\nGAME RESULTS\n--------------------\n")
-    determine_game_winner(player1_rounds_won, player2_rounds_won, computer_rounds_won, player1_rounds_lost, player2_rounds_lost, computer_rounds_lost)
-    print("")
+    game_winner = determine_game_winner(player1_rounds_won, player2_rounds_won, computer_rounds_won, player1_rounds_lost, player2_rounds_lost, computer_rounds_lost)
+    print(game_winner)
 
-    print("GAME OVER!\n")
+    print("\nGAME OVER!\n")
     input("Press ENTER to return to the main menu.")
 
 
