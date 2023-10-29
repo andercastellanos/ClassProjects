@@ -169,24 +169,23 @@ def determine_game_winner(rounds_won_and_lost):
 
 
 def determine_overall_winner():
-    player1_wins = player_stats["1"]["games_won"]
-    player2_wins = player_stats["2"]["games_won"]
-    computer_wins = player_stats["3"]["games_won"]
+    player1_wins = player_stats["Player 1"]["games_won"]
+    player2_wins = player_stats["Player 2"]["games_won"]
 
-    player1_losses = player_stats["1"]["games_lost"]
-    player2_losses = player_stats["2"]["games_lost"]
-    computer_losses = player_stats["3"]["games_lost"]
+    player1_losses = player_stats["Player 1"]["games_lost"]
+    player2_losses = player_stats["Player 2"]["games_lost"]
 
-    max_wins = max(player1_wins, player2_wins, computer_wins)
-    min_losses = min(player1_losses, player2_losses, computer_losses)
-
-    if player1_wins == player2_wins and player1_losses == player2_losses:
-        print("Overall Human Winner: Tie")
-    else:
-        if player1_wins > player2_wins:
-            print(f"Overall Human Winner: {player_stats['Player 1']['name']}")
-        else:
-            print(f"Overall Human Winner: {player_stats['Player 2']['name']}")
+    if player1_wins == player2_wins:
+        if player1_losses == player2_losses:
+            print("\nOverall Human Winner: Tie")
+        elif player1_losses < player2_losses:
+            print(f"\nOverall Human Winner: {players[0]}")
+        elif player2_losses < player1_losses:
+            print(f"\nOverall Human Winner: {players[1]}")
+    if player1_wins > player2_wins:
+        print(f"\nOverall Human Winner: {players[0]}")
+    if player2_wins > player1_wins:
+        print(f"\nOverall Human Winner: {players[1]}")
 
 
 def rules():
@@ -221,6 +220,8 @@ def stats(player1_name, player2_name, computer_name):
         print(
             f"{players[index]} - Rounds won: {rounds_won}, Rounds lost: {rounds_lost}, Rounds tied: {rounds_tied}, Games won: {games_won}, Games lost: {games_lost}, Games tied: {games_tied}")
         index = index + 1
+
+    determine_overall_winner()
 
     input("\nPress ENTER to return to the main menu.")
 
