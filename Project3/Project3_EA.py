@@ -49,8 +49,12 @@ def clear():
 
 
 def get_player_name(player_number):
+    playerString = ""
+    if player_number == 0: playerString = "first"
+    elif player_number == 1: playerString = "second"
+
     while True:
-        name = input(f"What is the name of Player {player_number}?: ")
+        name = input(f"What is the name of the {playerString} player? ")
         if 5 <= len(name) <= 20:
             return name
         else:
@@ -252,14 +256,14 @@ def play(player1_name, player2_name, computer_name):
 
 
 def menu():
-    while players[0] == players[1]:
-        clear()
+    clear()
 
-        if (players[0] == players[1]) & (players[0] != "") & (players[0] != None):
+    for x in range(2):
+        players[x] = get_player_name(x)
+
+        while (players[0] == players[1]) & (players[0] != "") & (players[0] != None):
             print("Player names cannot match. Please choose a different name.")
-
-        players[0] = get_player_name(1)
-        players[1] = get_player_name(2)
+            players[x] = get_player_name(x)
 
     while True:
         clear()
