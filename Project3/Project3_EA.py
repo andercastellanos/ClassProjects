@@ -169,11 +169,11 @@ def determine_game_winner(rounds_won_and_lost):
 
 
 def determine_overall_winner():
-    player1_wins = player_stats["Player 1"]["games_won"]
-    player2_wins = player_stats["Player 2"]["games_won"]
+    player1_wins = player_stats["1"]["games_won"]
+    player2_wins = player_stats["2"]["games_won"]
 
-    player1_losses = player_stats["Player 1"]["games_lost"]
-    player2_losses = player_stats["Player 2"]["games_lost"]
+    player1_losses = player_stats["1"]["games_lost"]
+    player2_losses = player_stats["2"]["games_lost"]
 
     if player1_wins == player2_wins:
         if player1_losses == player2_losses:
