@@ -2,18 +2,47 @@ from os import system, name
 import random
 
 players = ["", "", "Computer"]
+
 player_stats = {
-    "Player 1": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
-    "Player 2": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
-    "Computer": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0}
+    "1": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
+    "2": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
+    "3": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0}
 }
 
-win_matrix = [
-    [0, -1, 1, 1],
-    [1, 0, -1, -1],
-    [-1, 1, 0, -1],
-    [-1, 1, 1, 0]
-]
+player_v_computer_matrix = {
+    "1": {"1": 0, "2": -1, "3": 1, "4": 1},
+    "2": {"1": 1, "2": 0, "3": -1, "4": -1},
+    "3": {"1": -1, "2": 1, "3": 0, "4": -1},
+    "4": {"1": -1, "2": 1, "3": 1, "4": 0}
+}
+
+round_win_matrix = {
+    "1": {
+        "1": { "1": "Tie:1,2,3", "2": "Win:3", "3": "Tie:1,2", "4": "Tie:1,2", },
+        "2": { "1": "Win:2", "2": "Tie:2,3", "3": "Tie:1,2,3", "4": "Tie:1,2,3", },
+        "3": { "1": "Tie:1,3", "2": "Tie:1,2,3", "3": "Win:1", "4": "Win:1", },
+        "4": { "1": "Tie:1,3", "2": "Tie:1,2,3", "3": "Win:1", "4": "Win:1", },
+    },
+    "2": {
+        "1": { "1": "Win:1", "2": "Tie:1,3", "3": "Tie:1,2,3", "4": "Tie:1,2,3", },
+        "2": { "1": "Tie:1,2", "2": "Tie:1,2,3", "3": "Win:3", "4": "Win:3", },
+        "3": { "1": "Tie:1,2,3", "2": "Win:2", "3": "Tie:2,3", "4": "Win:3", },
+        "4": { "1": "Tie:1,2,3", "2": "Win:2", "3": "Win:2", "4": "Tie:2,3", },
+    },
+    "3": {
+        "1": { "1": "Tie:2,3", "2": "Tie:1,2,3", "3": "Win:2", "4": "Win:2", },
+        "2": { "1": "Tie:1,2,3", "2": "Win:1", "3": "Tie:1,3", "4": "Win:3", },
+        "3": { "1": "Win:3", "2": "Tie:1,2", "3": "Tie:1,2,3", "4": "Win:3", },
+        "4": { "1": "Win:3", "2": "Win:2", "3": "Win:2", "4": "Tie:2,3", },
+    },
+    "4": {
+        "1": { "1": "Tie:2,3", "2": "Tie:1,2,3", "3": "Win:2", "4": "Win:2", },
+        "2": { "1": "Tie:1,2,3", "2": "Win:1", "3": "Win:1", "4": "Tie:1,3", },
+        "3": { "1": "Win:3", "2": "Win:1", "3": "Win:1", "4": "Tie:1,3", },
+        "4": { "1": "Win:3", "2": "Tie:1,2", "3": "Tie:1,2", "4": "Tie:1,2,3", },
+    },
+}
+
 
 def clear():
     print("\033[H\033[J", end="")
@@ -38,7 +67,7 @@ def get_player_choice(player_name):
         try:
             choice = int(input(f"Your choice: "))
             if 1 <= choice <= 4:
-                return choice
+                return str(choice)
             else:
                 print("Invalid choice. Please enter a valid option (1/2/3/4).")
         except ValueError:
@@ -46,36 +75,102 @@ def get_player_choice(player_name):
 
 
 def get_computer_choice():
-    return random.randint(1, 4)
+    return str(random.randint(1, 4))
 
 
-def determine_round_winner(player_choice, computer_choice):
+def determine_round_winner(player1_choice, player2_choice, computer_choice):
+    rounds_won = [0, 0, 0]
+    rounds_lost = [0, 0, 0]
+    
+    print("")
 
-    if win_matrix[player_choice - 1][computer_choice - 1] == 0:
-        return "It's a tie!"
-    elif win_matrix[player_choice - 1][computer_choice - 1] == -1:
-        return "Computer wins!"
-    elif win_matrix[player_choice - 1][computer_choice - 1] == 1:
-        return "Player wins!"
+    round_result = round_win_matrix[player1_choice][player2_choice][computer_choice]
+    parsed_list = round_result.split(":")
+    round_winner_or_tie = parsed_list[0]
+    round_player_indices = parsed_list[1].split(",")
+
+    if round_winner_or_tie == "Win":
+        print("Round Winner:\n------------")
+        for player_name in player_stats.keys():
+            if player_name in round_player_indices:
+                print(f"{players[int(player_name) - 1]} wins!")
+                player_stats[player_name]["rounds_won"] += 1
+                rounds_won[int(player_name) - 1] += 1
+            else:
+                player_stats[player_name]["rounds_lost"] += 1
+                rounds_lost[int(player_name) - 1] += 1
+    elif round_winner_or_tie == "Tie":
+        print("Tied:\n-----")
+        for player_name in player_stats.keys():
+            if player_name in round_player_indices:
+                print(f"{players[int(player_name) - 1]}")
+                player_stats[player_name]["rounds_tied"] += 1
+            else:
+                player_stats[player_name]["rounds_lost"] += 1
+                rounds_lost[int(player_name) - 1] += 1
+
+    print("")
+
+    print("Individual Results:\n------------------")
+    # Player 1 vs. Computer Result
+    if player_v_computer_matrix[player1_choice][computer_choice] == 0:
+        print(f"{players[0]}: It's a tie against the computer!")
+    elif player_v_computer_matrix[player1_choice][computer_choice] == -1:
+        print(f"{players[0]}: Computer wins against the player!")
+    elif player_v_computer_matrix[player1_choice][computer_choice] == 1:
+        print(f"{players[0]}: Player wins against the computer!")
+
+    # Player 2 vs. Computer Result
+    if player_v_computer_matrix[player2_choice][computer_choice] == 0:
+        print(f"{players[1]}: It's a tie against the computer!")
+    elif player_v_computer_matrix[player2_choice][computer_choice] == -1:
+        print(f"{players[1]}: Computer wins against the player!")
+    elif player_v_computer_matrix[player2_choice][computer_choice] == 1:
+        print(f"{players[1]}: Player wins against the computer!")
+
+    print("")
+
+    return rounds_won + rounds_lost
 
 
-def determine_game_winner(player1_rounds_won, player2_rounds_won, computer_rounds_won):
-    if player1_rounds_won > player2_rounds_won:
-        return "Player 1"
-    elif player2_rounds_won > player1_rounds_won:
-        return "Player 2"
+def determine_game_winner(rounds_won_and_lost):
+    # Create a dictionary to map indexes to player names
+    player_index_to_name = {0: players[0], 1: players[1], 2: players[2]}
+    
+    # Create lists for wins and losses
+    wins = rounds_won_and_lost[0:3]
+    losses = rounds_won_and_lost[3:6]
+    
+    # Find the maximum number of wins
+    max_wins = max(wins)
+    
+    # Find players with the maximum number of wins
+    max_winners = [i for i, win in enumerate(wins) if win == max_wins]
+    
+    # If only one player has the maximum wins, declare them the winner
+    if len(max_winners) == 1:
+        print(f"{player_index_to_name[max_winners[0]]} wins the game!")
     else:
-        return "Tie"
+        # If there are multiple players with the same maximum wins, compare their losses
+        min_losses = min(losses[i] for i in max_winners)
+        
+        # Find the winners with the lowest losses
+        tie_winners = [player for player in max_winners if losses[player] == min_losses]
+        
+        if len(tie_winners) == 1:
+            print(f"{player_index_to_name[tie_winners[0]]} wins the game!")
+        else:
+            print("The game is tied.")
 
 
 def determine_overall_winner():
-    player1_wins = player_stats["Player 1"]["games_won"]
-    player2_wins = player_stats["Player 2"]["games_won"]
-    computer_wins = player_stats["Computer"]["games_won"]
+    player1_wins = player_stats["1"]["games_won"]
+    player2_wins = player_stats["2"]["games_won"]
+    computer_wins = player_stats["3"]["games_won"]
 
-    player1_losses = player_stats["Player 1"]["games_lost"]
-    player2_losses = player_stats["Player 2"]["games_lost"]
-    computer_losses = player_stats["Computer"]["games_lost"]
+    player1_losses = player_stats["1"]["games_lost"]
+    player2_losses = player_stats["2"]["games_lost"]
+    computer_losses = player_stats["3"]["games_lost"]
 
     max_wins = max(player1_wins, player2_wins, computer_wins)
     min_losses = min(player1_losses, player2_losses, computer_losses)
@@ -126,6 +221,8 @@ def stats(player1_name, player2_name, computer_name):
 
 
 def play(player1_name, player2_name, computer_name):
+    wins_and_losses = [0, 0, 0, 0, 0, 0]
+
     for round_number in range(1, 4):
         print(f"--------------------\nROUND {round_number}\n--------------------\n")
         player1_choice = get_player_choice(player1_name)
@@ -139,53 +236,19 @@ def play(player1_name, player2_name, computer_name):
         print(f"{player2_name} chose: {player2_choice}")
         print(f"{computer_name} chose: {computer_choice}")
 
-        result1 = determine_round_winner(player1_choice, computer_choice)
-        result2 = determine_round_winner(player2_choice, computer_choice)
-        print("")
-        print(f"{player1_name}: {result1}")
-        print(f"{player2_name}: {result2}")
-        print("")
+        rounds_won_and_lost = determine_round_winner(player1_choice, player2_choice, computer_choice)
 
-        if result1 == "Player wins!":
-            player_stats["Player 1"]["rounds_won"] += 1
-        elif result1 == "Computer wins!":
-            player_stats["Player 1"]["rounds_lost"] += 1
-        else:
-            player_stats["Player 1"]["rounds_tied"] += 1
+        test = []
 
-        if result2 == "Player wins!":
-            player_stats["Player 2"]["rounds_won"] += 1
-        elif result2 == "Computer wins!":
-            player_stats["Player 2"]["rounds_lost"] += 1
-        else:
-            player_stats["Player 2"]["rounds_tied"] += 1
+        for x, y in zip(wins_and_losses, rounds_won_and_lost):
+            test.append(x + y)
 
-        if result1 == "Computer wins!":
-            player_stats["Computer"]["rounds_won"] += 1
-        elif result1 == "Player wins!":
-            player_stats["Computer"]["rounds_lost"] += 1
-        else:
-            player_stats["Computer"]["rounds_tied"] += 1
+        wins_and_losses = test
 
-        if round_number % 3 == 0:
-            for player_name in player_stats.keys():
-                rounds_won = player_stats[player_name]["rounds_won"]
-                if rounds_won >= 3:
-                    player_stats[player_name]["games_won"] += 1
+    print(f"--------------------\nGAME RESULTS\n--------------------\n")
+    determine_game_winner(wins_and_losses)
 
-            for player_name in player_stats.keys():
-                rounds_lost = player_stats[player_name]["rounds_lost"]
-                if rounds_lost >= 3:
-                    player_stats[player_name]["games_lost"] += 1
-
-            for player_name in player_stats.keys():
-                rounds_tied = player_stats[player_name]["rounds_tied"]
-                if rounds_tied >= 3:
-                    player_stats[player_name]["games_tied"] += 1
-                    player_stats[player_name]["rounds_tied"] = 0
-
-    print("GAME OVER!\n")
-    input("Press ENTER to return to the main menu.")
+    input("\nPress ENTER to return to the main menu.")
 
 
 def menu():
