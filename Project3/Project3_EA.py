@@ -2,6 +2,7 @@ from os import system, name
 import random
 
 players = ["", "", "Computer"]
+weapons = {"1": "Rock", "2": "Paper", "3": "Scissors", "4": "Saw"}
 
 player_stats = {
     "1": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
@@ -236,9 +237,9 @@ def play(player1_name, player2_name, computer_name):
         computer_choice = get_computer_choice()
 
         print(f"--------------------\nROUND {round_number} RESULTS\n--------------------\n")
-        print(f"{player1_name} chose: {player1_choice}")
-        print(f"{player2_name} chose: {player2_choice}")
-        print(f"{computer_name} chose: {computer_choice}")
+        print(f"{player1_name} chose: {weapons[player1_choice]}")
+        print(f"{player2_name} chose: {weapons[player2_choice]}")
+        print(f"{computer_name} chose: {weapons[computer_choice]}")
 
         rounds_won_and_lost = determine_round_winner(player1_choice, player2_choice, computer_choice)
 
@@ -287,6 +288,9 @@ def menu():
         elif choice == "4":
             print("\nGoodbye!\n")
             break
+        else:
+            print("Invalid choice. Please enter a valid option (1/2/3/4).")
+            input("Press ENTER to try again.")
 
 
 if __name__ == "__main__":
