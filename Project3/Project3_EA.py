@@ -1,15 +1,20 @@
 from os import system, name
 import random
 
+# Create list of player names in the order that player selections are made.
 players = ["", "", "Computer"]
+
+# Create dictionary of weapons with corresponding key/value pairs.
 weapons = {"1": "Rock", "2": "Paper", "3": "Scissors", "4": "Saw"}
 
+# Create 2D dictionary (array) to hold all player statistics.
 player_stats = {
     "1": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
     "2": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0},
     "3": {"rounds_won": 0, "rounds_lost": 0, "rounds_tied": 0, "games_won": 0, "games_lost": 0, "games_tied": 0}
 }
 
+# Create 2D dictionary (array) to hold all player v. computer win/lose/tie outcomes.
 player_v_computer_matrix = {
     "1": {"1": 0, "2": -1, "3": 1, "4": 1},
     "2": {"1": 1, "2": 0, "3": -1, "4": -1},
@@ -17,6 +22,9 @@ player_v_computer_matrix = {
     "4": {"1": -1, "2": 1, "3": 1, "4": 0}
 }
 
+# Create 3D dictionary (array) to hold all win/lose/tie outcomes for the round with ALL THREE PLAYERS accounted for.
+# Structure of third dimesion values is Win:X,X,X or Tie:X,X,X
+# The third dimesion values denote the round outcome (e.g. Win/Tie) and the player number(s) associated with that status.
 round_win_matrix = {
     "1": {
         "1": { "1": "Tie:1,2,3", "2": "Win:3", "3": "Tie:1,2", "4": "Tie:1,2", },
@@ -44,11 +52,13 @@ round_win_matrix = {
     },
 }
 
-
+# clear() - Function to clear the screen.
 def clear():
     print("\033[H\033[J", end="")
 
-
+# get_player_name - Function to input the player names at runtime. Validates for correct length.
+# Attribute player_number - corresponds to the player index in order being played (Valid: 0,1).
+# Return name - the name of the player being input.
 def get_player_name(player_number):
     playerString = ""
     if player_number == 0: playerString = "first"
@@ -61,7 +71,9 @@ def get_player_name(player_number):
         else:
             print("Name should be 5-20 characters long.")
 
-
+# get_player_choice - Function to output round screen and input the player weapon choice during a round. Valiudates input.
+# Attribute player_name - Player name as a string.
+# Returns the string version of the numerical weapon choice.
 def get_player_choice(player_name):
     print(f"{player_name}, enter your choice:\n")
     print("1. Rock")
@@ -78,11 +90,14 @@ def get_player_choice(player_name):
         except ValueError:
             print("Invalid input. Please enter a valid option (1/2/3/4).")
 
-
+# get_computer_choice - Function to randomly select the computer's weapon choice during a round. Valiudates input.
+# Returns the string version of the numerical weapon choice.
 def get_computer_choice():
     return str(random.randint(1, 4))
 
-
+# determine_round_winner - Determines round winner, displays this information to the users, and updates the game statistics accrodingly.
+# Attributes player1_choice, player2_choice, computer_choice - String representation of the user/computer's weapon choices.
+# Returns a six-element list representing each user's wins/losses and the computer's wins/losses.
 def determine_round_winner(player1_choice, player2_choice, computer_choice):
     rounds_won = [0, 0, 0]
     rounds_lost = [0, 0, 0]
@@ -139,7 +154,8 @@ def determine_round_winner(player1_choice, player2_choice, computer_choice):
 
     return rounds_won + rounds_lost
 
-
+# determine_game_winner - Determines round winner, displays this information to the users, and updates the game statistics accrodingly.
+# Attribute round_won_lost_tied - Nine-element dictionary represeting user/computer wins/losses/ties
 def determine_game_winner(rounds_won_lost_tied):
     # Create lists for wins and losses
     wins = rounds_won_lost_tied[0:3]
@@ -204,7 +220,8 @@ def determine_game_winner(rounds_won_lost_tied):
                     else:
                         player_stats[y]["games_lost"] += 1
 
-
+# determine_overall_winner - Reviews game statistics to determine the overall human winner.
+# Used in the statistics screen.
 def determine_overall_winner():
     player1_wins = player_stats["1"]["games_won"]
     player2_wins = player_stats["2"]["games_won"]
@@ -224,7 +241,7 @@ def determine_overall_winner():
     if player2_wins > player1_wins:
         print(f"\nOverall Human Winner: {players[1]}")
 
-
+# rules() - Displays the rules screen. All rules are displayed to the users.
 def rules():
     print("--------------------\nGAME RULES\n--------------------\n")
     print("Winner of the round will be determined as follow:\n")
@@ -238,8 +255,8 @@ def rules():
         "Overall human winner is based on the greater number of won games against the computer and least games lost (must account for tie between human players).\n")
     input("Press ENTER to return to the main menu.")
 
-
-def stats(player1_name, player2_name, computer_name):
+# stats() - Displays the user and computer statistics for both round and game results.
+def stats():
     print("--------------------\nSTATISTICS\n--------------------\n")
 
     index = 0
@@ -262,7 +279,8 @@ def stats(player1_name, player2_name, computer_name):
 
     input("\nPress ENTER to return to the main menu.")
 
-
+# play() - Displays the game screen, and calls the get_player_choice, get_computer_choice(), determine_round_winner(), and determine_game_winner() funtions
+# Attributes player1_name, player2_name, computer_name - String representations of the player name.
 def play(player1_name, player2_name, computer_name):
     wins_losses_ties = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -279,7 +297,7 @@ def play(player1_name, player2_name, computer_name):
         print(f"{player2_name} chose: {weapons[player2_choice]}")
         print(f"{computer_name} chose: {weapons[computer_choice]}")
 
-        rounds_won_lost_tied = determine_round_winner(player1_choice, player2_choice, computer_choice)
+        rounds_won_lost_tied = determine_round_winner(player1_choice, player2_choice, computer_choice) + [0, 0, 0]
 
         combined_rounds_won_lost = []
 
@@ -293,7 +311,7 @@ def play(player1_name, player2_name, computer_name):
 
     input("\nPress ENTER to return to the main menu.")
 
-
+# play() - Displays the game menu, and allows for selection of play(), rules(), stats(), or Exit selections.
 def menu():
     clear()
 
@@ -322,7 +340,7 @@ def menu():
             rules()
         elif choice == "3":
             clear()
-            stats(players[0], players[1], players[2])
+            stats()
         elif choice == "4":
             print("\nGoodbye!\n")
             break
@@ -330,6 +348,6 @@ def menu():
             print("Invalid choice. Please enter a valid option (1/2/3/4).")
             input("Press ENTER to try again.")
 
-
+# Default the Python script to the menu() function
 if __name__ == "__main__":
     menu()
